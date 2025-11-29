@@ -1,1 +1,14 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+body {
+    background-color: white;
+    color: rgb(53, 53, 53);
+    display: flex;
+    align-items: center;
+
+    @media (max-width: 640px) {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+}

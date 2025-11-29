@@ -1,44 +1,31 @@
-import { useState, useEffect } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import './App.css'
-import { Perfil } from './components/perfil'  
+import { Perfil } from './components/Perfil'
+import { useQuery } from '@tanstack/react-query'
+import { fetchReposData, fetchUserData } from './services/api'
+import { useUserStore } from './store/userStore'
 
 function App() {
-    const [userData, setUserData] = useState<any>(null)
-    const [reposData, setReposData] = useState<any[]>([])
+    const { username } = useUserStore()
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userResponse = await fetch('https://api.github.com/users/PirataZang')
-                const userData = await userResponse.json()
-                setUserData(userData)
-            } catch (error) {
-                console.error('Erro ao buscar dados do usuário:', error)
-            }
-        }
+    const { data: userData, isLoading: isUserLoading } = useQuery({
+        queryKey: ['user', username],
+        queryFn: () => fetchUserData(username),
+    })
 
-        const fetchReposData = async () => {
-            try {
-                const reposResponse = await fetch('https://api.github.com/users/PirataZang/repos')
-                const reposData = await reposResponse.json()
-                setReposData(reposData)
-            } catch (error) {
-                console.error('Erro ao buscar repositórios:', error)
-            }
-        }
+    const { data: reposData, isLoading: isReposLoading } = useQuery({
+        queryKey: ['repos', username],
+        queryFn: () => fetchReposData(username),
+    })
 
-        fetchUserData()
-        fetchReposData()
-    }, [])
-
-    if (!userData) {
+    if (isUserLoading || isReposLoading) {
         return <div>Carregando...</div>
     }
 
     return (
-        <>
-            <Perfil image={userData.avatar_url} name={userData.name} bio={userData.bio} repos={reposData} />
-        </>
+        <div className="flex flex-col">
+            <Perfil image={userData.avatar_url} name={userData.name} bio={userData.bio} infos={{ company: userData.company, location: userData.location }} />
+        </div>
     )
 }
 
