@@ -1,4 +1,4 @@
-import { faBuilding, faLocationDot } from '@fortawesome/free-solid-svg-icons'
+import { faBuilding, faChevronDown, faChevronUp, faLink, faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useState } from 'react'
 
@@ -9,6 +9,7 @@ interface PerfilProps {
     infos: {
         company: string
         location: string
+        blog: string
     }
 }
 
@@ -16,7 +17,7 @@ export const Perfil = ({ image, name, bio, infos }: PerfilProps) => {
     const [showInfo, setShowInfo] = useState(false)
 
     return (
-        <div className="flex flex-col items-center w-full">
+        <div className="flex flex-col items-center w-full p-4">
             <div className="flex flex-col items-center justify-center gap-3 w-[217px] ">
                 <img src={image} alt={`Foto de ${name}`} className="rounded-full w-[104px] mb-1" />
 
@@ -29,9 +30,27 @@ export const Perfil = ({ image, name, bio, infos }: PerfilProps) => {
                     <button onClick={() => setShowInfo(!showInfo)} className="text-blue-500 text-sm">
                         Informações adicionais
                     </button>
-
-                    <span className="text-sm text-blue-400">{showInfo ? '▲' : '▼'}</span>
+                    <FontAwesomeIcon className="text-sm text-blue-400" icon={showInfo ? faChevronUp : faChevronDown} />
                 </div>
+            </div>
+
+            <div className="flex mt-2 text-start w-[380px] sm:w-full">
+                {showInfo && (
+                    <ul className="bg-gray-100 rounded-2xl w-full p-5 flex gap-4 flex-col">
+                        <li className="text-sm flex gap-3 text-blue-400">
+                            <FontAwesomeIcon icon={faBuilding} />
+                            {infos.company || 'N/A'}
+                        </li>
+                        <li className="text-sm flex gap-3 text-blue-400">
+                            <FontAwesomeIcon icon={faLocationDot} />
+                            {infos.location || 'N/A'}
+                        </li>
+                        <li className="text-sm flex gap-3 text-blue-400">
+                            <FontAwesomeIcon icon={faLink} />
+                            {infos.blog || 'N/A'}
+                        </li>
+                    </ul>
+                )}
             </div>
         </div>
     )

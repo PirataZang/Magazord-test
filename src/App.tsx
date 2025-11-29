@@ -18,13 +18,14 @@ function App() {
         queryFn: () => fetchReposData(username),
     })
 
+    console.log(userData)
     if (isUserLoading || isReposLoading) {
         return <div>Carregando...</div>
     }
 
     return (
         <div className="flex flex-col">
-            <Perfil image={userData.avatar_url} name={userData.name} bio={userData.bio} infos={{ company: userData.company, location: userData.location }} />
+            <Perfil image={userData.avatar_url} name={userData.name} bio={userData.bio} infos={{ company: userData.company, location: userData.location, blog: userData.blog, }} />
         </div>
     )
 }
