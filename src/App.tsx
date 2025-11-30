@@ -4,6 +4,7 @@ import { Perfil } from './components/Perfil'
 import { useQuery } from '@tanstack/react-query'
 import { fetchReposData, fetchUserData } from './services/api'
 import { useUserStore } from './store/userStore'
+import { Header } from './components/Header'
 
 function App() {
     const { username } = useUserStore()
@@ -24,8 +25,9 @@ function App() {
     }
 
     return (
-        <div className="flex flex-col">
-            <Perfil image={userData.avatar_url} name={userData.name} bio={userData.bio} infos={{ company: userData.company, location: userData.location, blog: userData.blog, }} />
+        <div className="flex flex-col w-full items-center sm:items-baseline">
+            <Header />
+            <Perfil image={userData.avatar_url} name={userData.name} bio={userData.bio} infos={{ company: userData.company, location: userData.location, blog: userData.blog }} />
         </div>
     )
 }

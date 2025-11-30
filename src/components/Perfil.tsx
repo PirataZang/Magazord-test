@@ -17,7 +17,7 @@ export const Perfil = ({ image, name, bio, infos }: PerfilProps) => {
     const [showInfo, setShowInfo] = useState(false)
 
     return (
-        <div className="flex flex-col items-center w-full p-4">
+        <div className="flex flex-col items-center w-[220px] p-4">
             <div className="flex flex-col items-center justify-center gap-3 w-[217px] ">
                 <img src={image} alt={`Foto de ${name}`} className="rounded-full w-[104px] mb-1" />
 
