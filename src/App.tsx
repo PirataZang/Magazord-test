@@ -27,7 +27,13 @@ function App() {
     return (
         <div className="flex flex-col w-full items-center sm:items-baseline">
             <Header />
-            <Perfil image={userData.avatar_url} name={userData.name} bio={userData.bio} infos={{ company: userData.company, location: userData.location, blog: userData.blog }} />
+            <div id='content' className='flex flex-col sm:flex-row sm:gap-5'>
+                <Perfil image={userData.avatar_url} name={userData.name} bio={userData.bio} infos={{ company: userData.company, location: userData.location, blog: userData.blog }} />
+                <div className='w-full border h-[98vh] bg-amber-200 flex gap-5'>
+                    <span>aaa</span>
+                    <span>aaa</span>
+                </div>
+            </div>
         </div>
     )
 }
