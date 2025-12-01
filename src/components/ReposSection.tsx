@@ -1,12 +1,54 @@
 // Seu novo arquivo src/components/ReposSection.tsx
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBookBookmark, faStar, faCaretDown, faChevronDown, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faBookBookmark, faStar, faChevronDown, faMagnifyingGlass, faCodeBranch } from '@fortawesome/free-solid-svg-icons'
+import { getLatestRelease } from '../services/githubApi'
 
 type RepoData = any[]
 interface ReposSectionProps {
     reposData: RepoData
+}
+
+const RepoRelease: React.FC<{ repo: any }> = ({ repo }) => {
+    const [releaseName, setReleaseName] = useState('Loading...')
+    const [releaseBody, setReleaseBody] = useState('Loading...')
+
+    useEffect(() => {
+        const fetchRelease = async () => {
+            const release = await getLatestRelease(repo.name)
+            if (release) {
+                setReleaseName(release.name)
+                setReleaseBody(release.body)
+            } else {
+                setReleaseName('No release found')
+                setReleaseBody(repo.description ?? 'Sem descrição')
+            }
+        }
+
+        fetchRelease()
+    }, [repo.name, repo.description])
+
+    return (
+        <div className="flex flex-col gap-3">
+            <div>
+                <span className="">
+                    {repo?.name} / <span className="text-blue-500">{releaseName}</span>
+                </span>
+            </div>
+            <div>
+                <span className="text-sm text-gray-400">{releaseBody}</span>
+            </div>
+            <div className="flex gap-10">
+                <span className="">
+                    <FontAwesomeIcon icon={faStar} /> {repo?.language}
+                </span>
+                <span className="">
+                    <FontAwesomeIcon icon={faCodeBranch} /> {repo?.language}
+                </span>
+            </div>
+        </div>
+    )
 }
 
 export const ReposSection: React.FC<ReposSectionProps> = ({ reposData }) => {
@@ -65,7 +107,11 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData }) => {
                 {activeTab === 'repos' && (
                     <div className="space-y-4">
                         <h3 className="text-xl font-semibold">Repositórios de {reposData.length}</h3>
-                        <p className="text-gray-600">Lista dos repositórios viria aqui...</p>
+                        <div className="flex gap-10 flex-col">
+                            {reposData.map((repo, index) => (
+                                <RepoRelease key={index} repo={repo} />
+                            ))}
+                        </div>
                     </div>
                 )}
 
