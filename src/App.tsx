@@ -2,11 +2,9 @@
 import './App.css'
 import { Perfil } from './components/Perfil'
 import { useQuery } from '@tanstack/react-query'
-import { fetchReposData, fetchUserData } from './services/api'
+import { fetchReposData, fetchStarredData, fetchUserData } from './services/api'
 import { useUserStore } from './store/userStore'
 import { Header } from './components/Header'
-import { faBookBookmark } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReposSection } from './components/ReposSection'
 
 function App() {
@@ -22,7 +20,14 @@ function App() {
         queryFn: () => fetchReposData(username),
     })
 
-    if (isUserLoading || isReposLoading) {
+    const { data: starredData, isLoading: isStarredLoading } = useQuery({
+        queryKey: ['repos', username],
+        queryFn: () => fetchStarredData(username),
+    })
+
+    debugger
+
+    if (isUserLoading || isReposLoading || isStarredLoading) {
         return <div>Carregando...</div>
     }
 
@@ -32,7 +37,7 @@ function App() {
             <div id="content" className="flex flex-col sm:flex-row sm:gap-5">
                 <Perfil image={userData.avatar_url} name={userData.name} bio={userData.bio} infos={{ company: userData.company, location: userData.location, blog: userData.blog }} />
                 <div className="w-full">
-                    <ReposSection reposData={reposData} />
+                    <ReposSection reposData={reposData} starredData={starredData} />
                 </div>
             </div>
         </div>

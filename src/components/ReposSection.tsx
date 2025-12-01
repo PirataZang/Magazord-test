@@ -4,10 +4,13 @@ import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookBookmark, faStar, faChevronDown, faMagnifyingGlass, faCodeBranch } from '@fortawesome/free-solid-svg-icons'
 import { getLatestRelease } from '../services/githubApi'
+import collect from 'collect.js'
 
 type RepoData = any[]
+type StarredData = any[]
 interface ReposSectionProps {
     reposData: RepoData
+    starredData: StarredData
 }
 
 const RepoRelease: React.FC<{ repo: any }> = ({ repo }) => {
@@ -51,10 +54,14 @@ const RepoRelease: React.FC<{ repo: any }> = ({ repo }) => {
     )
 }
 
-export const ReposSection: React.FC<ReposSectionProps> = ({ reposData }) => {
+export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredData }) => {
     const [activeTab, setActiveTab] = useState<'repos' | 'starred'>('repos')
     const [searchTerm, setSearchTerm] = useState('')
+    const [selectedLanguages, setSelectedLanguages] = useState<string[]>([])
+    const [showLanguageFilter, setShowLanguageFilter] = useState(false)
     const starredCount = 12
+
+    const languages = collect(reposData).pluck('language').unique().all()
 
     const getTabClasses = (tabName: 'repos' | 'starred') => {
         const isActive = activeTab === tabName
@@ -69,17 +76,23 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData }) => {
         return classes
     }
 
-    const FilterButton: React.FC<{ label: string }> = ({ label }) => (
-        <button className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-full text-sm transition-colors duration-150">
-            <FontAwesomeIcon icon={faChevronDown} className="text-xs" />
-            {label}
-        </button>
-    )
+    const handleLanguageChange = (language: string) => {
+        setSelectedLanguages((prev) => (prev.includes(language) ? prev.filter((l) => l !== language) : [...prev, language]))
+    }
 
-    const filteredRepos = reposData.filter((repo) => repo.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filteredRepos = reposData.filter((repo) => {
+        const nameMatch = repo.name.toLowerCase().includes(searchTerm.toLowerCase())
+        const languageMatch = selectedLanguages.length === 0 || selectedLanguages.includes(repo.language)
+        return nameMatch && languageMatch
+    })
 
+    // Placeholder for starred repositories data
     const starredRepos: any[] = []
-    const filteredStarredRepos = starredRepos.filter((repo) => repo.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filteredStarredRepos = starredRepos.filter((repo) => {
+        const nameMatch = repo.name.toLowerCase().includes(searchTerm.toLowerCase())
+        const languageMatch = selectedLanguages.length === 0 || selectedLanguages.includes(repo.language)
+        return nameMatch && languageMatch
+    })
 
     return (
         <div className="w-full">
@@ -104,8 +117,26 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData }) => {
                 </div>
 
                 <div className="flex gap-2">
-                    <FilterButton label="Type" />
-                    <FilterButton label="Language" />
+                    <button className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-full text-sm transition-colors duration-150">
+                        <FontAwesomeIcon icon={faChevronDown} className="text-xs" />
+                        Type
+                    </button>
+                    <div className="relative">
+                        <button onClick={() => setShowLanguageFilter(!showLanguageFilter)} className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-full text-sm transition-colors duration-150">
+                            <FontAwesomeIcon icon={faChevronDown} className="text-xs" />
+                            Language
+                        </button>
+                        {showLanguageFilter && (
+                            <div className="absolute z-10 mt-2 w-48 bg-white rounded-md shadow-lg">
+                                {languages.map((lang: any, index) => (
+                                    <label key={index} className="flex items-center p-2">
+                                        <input type="checkbox" checked={selectedLanguages.includes(lang)} onChange={() => handleLanguageChange(lang)} className="form-checkbox h-4 w-4 text-blue-600" />
+                                        <span className="ml-2 text-sm text-gray-700">{lang}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
