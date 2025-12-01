@@ -53,6 +53,7 @@ const RepoRelease: React.FC<{ repo: any }> = ({ repo }) => {
 
 export const ReposSection: React.FC<ReposSectionProps> = ({ reposData }) => {
     const [activeTab, setActiveTab] = useState<'repos' | 'starred'>('repos')
+    const [searchTerm, setSearchTerm] = useState('')
     const starredCount = 12
 
     const getTabClasses = (tabName: 'repos' | 'starred') => {
@@ -75,6 +76,11 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData }) => {
         </button>
     )
 
+    const filteredRepos = reposData.filter((repo) => repo.name.toLowerCase().includes(searchTerm.toLowerCase()))
+
+    const starredRepos: any[] = []
+    const filteredStarredRepos = starredRepos.filter((repo) => repo.name.toLowerCase().includes(searchTerm.toLowerCase()))
+
     return (
         <div className="w-full">
             <div className="flex ">
@@ -94,7 +100,7 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData }) => {
             <div className="flex flex-col-reverse lg:flex-row gap-3 p-4 text-gray-500">
                 <div className="flex gap-2 items-center ">
                     <FontAwesomeIcon icon={faMagnifyingGlass} />
-                    <input type="text" placeholder="Search Here" className="p-2 rounded-md w-full sm:w-64 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                    <input type="text" placeholder="Search Here" className="p-2 rounded-md w-full sm:w-64 focus:outline-none focus:ring-1 focus:ring-blue-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
 
                 <div className="flex gap-2">
@@ -106,9 +112,9 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData }) => {
             <div className="p-4">
                 {activeTab === 'repos' && (
                     <div className="space-y-4">
-                        <h3 className="text-xl font-semibold">Repositórios de {reposData.length}</h3>
+                        <h3 className="text-xl font-semibold">Repositórios de {filteredRepos.length}</h3>
                         <div className="flex gap-10 flex-col">
-                            {reposData.map((repo, index) => (
+                            {filteredRepos.map((repo, index) => (
                                 <RepoRelease key={index} repo={repo} />
                             ))}
                         </div>
@@ -117,8 +123,16 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData }) => {
 
                 {activeTab === 'starred' && (
                     <div className="space-y-4">
-                        <h3 className="text-xl font-semibold}">Estrelados ({starredCount})</h3>
-                        <p className="text-gray-600">Lista dos repositórios estrelados viria aqui...</p>
+                        <h3 className="text-xl font-semibold}">Estrelados ({filteredStarredRepos.length})</h3>
+                        {filteredStarredRepos.length > 0 ? (
+                            <div className="flex gap-10 flex-col">
+                                {filteredStarredRepos.map((repo, index) => (
+                                    <RepoRelease key={index} repo={repo} />
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-gray-600">Nenhum repositório estrelado encontrado.</p>
+                        )}
                     </div>
                 )}
             </div>
