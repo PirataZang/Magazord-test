@@ -16,7 +16,6 @@ export const fetchReposData = async (username: string) => {
 
 export const fetchStarredData = async (username: string) => {
     const response = await fetch(`https://api.github.com/users/${username}/starred`)
-    debugger
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
