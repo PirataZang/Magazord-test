@@ -59,7 +59,6 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredDa
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedLanguages, setSelectedLanguages] = useState<string[]>([])
     const [showLanguageFilter, setShowLanguageFilter] = useState(false)
-    const starredCount = 12
 
     const languages = collect(reposData).pluck('language').unique().all()
 
@@ -106,7 +105,7 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredDa
                 <div className={getTabClasses('starred')} onClick={() => setActiveTab('starred')}>
                     <FontAwesomeIcon icon={faStar} />
                     <span>Starred</span>
-                    <span className="bg-gray-100 text-gray-500 text-xs font-bold py-0.5 px-2 rounded-full">{starredCount}</span>
+                    <span className="bg-gray-100 text-gray-500 text-xs font-bold py-0.5 px-2 rounded-full">{starredData.length}</span>
                 </div>
             </div>
 
