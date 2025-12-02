@@ -13,7 +13,7 @@ interface ReposSectionProps {
     starredData: StarredData
 }
 
-const RepoRelease: React.FC<{ repo: any }> = ({ repo }) => {
+const RepoRelease: React.FC<{ repo: any; starred?: boolean }> = ({ repo, starred }) => {
     const [releaseName, setReleaseName] = useState('Loading...')
     const [releaseBody, setReleaseBody] = useState('Loading...')
 
@@ -44,10 +44,10 @@ const RepoRelease: React.FC<{ repo: any }> = ({ repo }) => {
             </div>
             <div className="flex gap-10">
                 <span className="">
-                    <FontAwesomeIcon icon={faStar} /> {repo?.language}
+                    <FontAwesomeIcon icon={faStar} /> {starred ? repo.language : repo?.stargazers_count}
                 </span>
                 <span className="">
-                    <FontAwesomeIcon icon={faCodeBranch} /> {repo?.language}
+                    <FontAwesomeIcon icon={faCodeBranch} /> {repo?.forks_count}
                 </span>
             </div>
         </div>
@@ -154,7 +154,7 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredDa
                         {filteredStarredRepos.length > 0 ? (
                             <div className="flex gap-10 flex-col">
                                 {filteredStarredRepos.map((repo, index) => (
-                                    <RepoRelease key={index} repo={repo} />
+                                    <RepoRelease key={index} repo={repo} starred/>
                                 ))}
                             </div>
                         ) : (
