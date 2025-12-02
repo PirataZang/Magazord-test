@@ -44,7 +44,7 @@ const RepoRelease: React.FC<{ repo: any; starred?: boolean }> = ({ repo, starred
             </div>
             <div className="flex gap-10">
                 <span className="">
-                    <FontAwesomeIcon icon={faStar} /> {starred ? repo.language : repo?.stargazers_count}
+                    <FontAwesomeIcon hidden={starred} icon={faStar} /> {starred ? repo.language : repo?.stargazers_count}
                 </span>
                 <span className="">
                     <FontAwesomeIcon icon={faCodeBranch} /> {repo?.forks_count}
