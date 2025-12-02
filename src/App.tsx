@@ -25,6 +25,7 @@ function App() {
         queryFn: () => fetchStarredData(username),
     })
     
+
     if (isUserLoading || isReposLoading || isStarredLoading) {
         return <div>Carregando...</div>
     }

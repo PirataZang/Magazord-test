@@ -13,6 +13,12 @@ interface ReposSectionProps {
     starredData: StarredData
 }
 
+/**
+ * Carrega e exibe as informações detalhadas de um repositório, incluindo a última release.
+ * * @param param0 O repositório e um indicador se é um item estrelado.
+ * @returns Componente React.
+ */
+
 const RepoRelease: React.FC<{ repo: any; starred?: boolean }> = ({ repo, starred }) => {
     const [releaseName, setReleaseName] = useState('Loading...')
     const [releaseBody, setReleaseBody] = useState('Loading...')
@@ -54,13 +60,25 @@ const RepoRelease: React.FC<{ repo: any; starred?: boolean }> = ({ repo, starred
     )
 }
 
+/**
+ * Componente principal para exibir e gerenciar repositórios e itens favoritos do GitHub.
+ *
+ * Gerencia a visualização de dados em abas ('Repositories' e 'Starred')
+ * e aplica filtros de busca, linguagem e tipo (forks, archived, etc.).
+ *
+ * @param {ReposSectionProps} param0 As propriedades do componente, contendo listas de repositórios e itens favoritos.
+ * @returns {React.FC<ReposSectionProps>} O componente ReposSection.
+ */
 export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredData }) => {
     const [activeTab, setActiveTab] = useState<'repos' | 'starred'>('repos')
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedLanguages, setSelectedLanguages] = useState<string[]>([])
     const [showLanguageFilter, setShowLanguageFilter] = useState(false)
+    const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+    const [showTypeFilter, setShowTypeFilter] = useState(false)
 
     const languages = collect(reposData).pluck('language').unique().all()
+    const types = ['all', 'source', 'forks', 'archived', 'mirror']
 
     const getTabClasses = (tabName: 'repos' | 'starred') => {
         const isActive = activeTab === tabName
@@ -79,10 +97,34 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredDa
         setSelectedLanguages((prev) => (prev.includes(language) ? prev.filter((l) => l !== language) : [...prev, language]))
     }
 
+    const handleTypeChange = (type: string) => {
+        setSelectedTypes((prev) => (prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]))
+    }
+
     const filteredRepos = reposData.filter((repo) => {
         const nameMatch = repo.name.toLowerCase().includes(searchTerm.toLowerCase())
         const languageMatch = selectedLanguages.length === 0 || selectedLanguages.includes(repo.language)
-        return nameMatch && languageMatch
+        let typeMatch = true
+        if (selectedTypes.length > 0) {
+            typeMatch = selectedTypes.some((selectedType) => {
+                switch (selectedType) {
+                    case 'source':
+                        return repo.fork === false && repo.archived === false
+                    case 'forks':
+                        return repo.fork === true
+                    case 'archived':
+                        return repo.archived === true
+                    case 'mirror':
+                        return !!repo.mirror_url
+                    case 'all':
+                        return repo.fork === true, repo.archived === true, !!repo.mirror_url
+                    default:
+                        return true
+                }
+            })
+        }
+
+        return nameMatch && languageMatch && typeMatch
     })
 
     const starredRepos: any[] = starredData
@@ -114,11 +156,24 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredDa
                     <input type="text" placeholder="Search Here" className="p-2 rounded-md w-full sm:w-64 focus:outline-none focus:ring-1 focus:ring-blue-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
 
-                <div className="flex gap-2">
-                    <button className="flex items-center h-[35px] gap-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-full text-sm transition-colors duration-150">
+                <div className="relative">
+                    <button onClick={() => setShowTypeFilter(!showTypeFilter)} className="flex items-center h-[35px] gap-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-full text-sm transition-colors duration-150">
                         <FontAwesomeIcon icon={faChevronDown} className="text-xs" />
                         Type
                     </button>
+                    {showTypeFilter && (
+                        <div className="absolute z-10 mt-2 w-48 bg-white rounded-md shadow-lg">
+                            {types.map((type, index) => (
+                                <label key={index} className="flex items-center p-2 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" checked={selectedTypes.includes(type)} onChange={() => handleTypeChange(type)} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                                    <span className="ml-2 text-sm text-gray-700">{type.charAt(0).toUpperCase() + type.slice(1)}</span>
+                                </label>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex gap-2">
                     <div className="relative">
                         <button onClick={() => setShowLanguageFilter(!showLanguageFilter)} className="flex items-center h-[35px] gap-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-full text-sm transition-colors duration-150">
                             <FontAwesomeIcon icon={faChevronDown} className="text-xs" />
@@ -154,7 +209,7 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredDa
                         {filteredStarredRepos.length > 0 ? (
                             <div className="flex gap-10 flex-col">
                                 {filteredStarredRepos.map((repo, index) => (
-                                    <RepoRelease key={index} repo={repo} starred/>
+                                    <RepoRelease key={index} repo={repo} starred />
                                 ))}
                             </div>
                         ) : (
