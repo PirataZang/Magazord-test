@@ -85,8 +85,7 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredDa
         return nameMatch && languageMatch
     })
 
-    // Placeholder for starred repositories data
-    const starredRepos: any[] = []
+    const starredRepos: any[] = starredData
     const filteredStarredRepos = starredRepos.filter((repo) => {
         const nameMatch = repo.name.toLowerCase().includes(searchTerm.toLowerCase())
         const languageMatch = selectedLanguages.length === 0 || selectedLanguages.includes(repo.language)
@@ -116,12 +115,12 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredDa
                 </div>
 
                 <div className="flex gap-2">
-                    <button className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-full text-sm transition-colors duration-150">
+                    <button className="flex items-center h-[35px] gap-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-full text-sm transition-colors duration-150">
                         <FontAwesomeIcon icon={faChevronDown} className="text-xs" />
                         Type
                     </button>
                     <div className="relative">
-                        <button onClick={() => setShowLanguageFilter(!showLanguageFilter)} className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-full text-sm transition-colors duration-150">
+                        <button onClick={() => setShowLanguageFilter(!showLanguageFilter)} className="flex items-center h-[35px] gap-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-full text-sm transition-colors duration-150">
                             <FontAwesomeIcon icon={faChevronDown} className="text-xs" />
                             Language
                         </button>
@@ -142,7 +141,6 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredDa
             <div className="p-4">
                 {activeTab === 'repos' && (
                     <div className="space-y-4">
-                        <h3 className="text-xl font-semibold">Repositórios de {filteredRepos.length}</h3>
                         <div className="flex gap-10 flex-col">
                             {filteredRepos.map((repo, index) => (
                                 <RepoRelease key={index} repo={repo} />
@@ -153,7 +151,6 @@ export const ReposSection: React.FC<ReposSectionProps> = ({ reposData, starredDa
 
                 {activeTab === 'starred' && (
                     <div className="space-y-4">
-                        <h3 className="text-xl font-semibold}">Estrelados ({filteredStarredRepos.length})</h3>
                         {filteredStarredRepos.length > 0 ? (
                             <div className="flex gap-10 flex-col">
                                 {filteredStarredRepos.map((repo, index) => (

@@ -21,10 +21,10 @@ function App() {
     })
 
     const { data: starredData, isLoading: isStarredLoading } = useQuery({
-        queryKey: ['repos', username],
+        queryKey: ['starred', username],
         queryFn: () => fetchStarredData(username),
     })
-
+    
     if (isUserLoading || isReposLoading || isStarredLoading) {
         return <div>Carregando...</div>
     }
