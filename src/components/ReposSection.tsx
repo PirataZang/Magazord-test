@@ -41,9 +41,9 @@ const RepoRelease: React.FC<{ repo: any; starred?: boolean }> = ({ repo, starred
     return (
         <div className="flex flex-col gap-3">
             <div>
-                <span className="">
+                <a href={repo.html_url} className='text-black' target='_blank'>
                     {repo?.name} / <span className="text-blue-500">{releaseName}</span>
-                </span>
+                </a>
             </div>
             <div>
                 <span className="text-sm text-gray-400">{releaseBody}</span>
