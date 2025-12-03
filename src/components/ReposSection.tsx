@@ -49,12 +49,15 @@ const RepoRelease: React.FC<{ repo: any; starred?: boolean }> = ({ repo, starred
                 <span className="text-sm text-gray-400">{releaseBody}</span>
             </div>
             <div className="flex gap-10">
-                <span className="">
-                    <FontAwesomeIcon hidden={starred} icon={faStar} /> {starred ? repo.language : repo?.stargazers_count}
-                </span>
-                <span className="">
+                <div className="">
+                    <span hidden={starred}>
+                        <FontAwesomeIcon icon={faStar} /> {repo?.stargazers_count}
+                    </span>
+                    <span hidden={!starred}>{repo?.language}</span>
+                </div>
+                <div className="">
                     <FontAwesomeIcon icon={faCodeBranch} /> {repo?.forks_count}
-                </span>
+                </div>
             </div>
         </div>
     )
